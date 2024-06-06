@@ -1,5 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import os
 
 # Fonction pour injecter le code HTML dans la balise <head>
 def inject_html_in_head():
@@ -16,5 +17,5 @@ def inject_html_in_head():
     """
     components.html(custom_head, height=0)
 
-open("idex.html", "r")
+st.write(os.listdir())
 st.write("click ! ")
