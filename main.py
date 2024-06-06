@@ -50,3 +50,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    if os.path.isfile("recorded_video.mp4"):
+        st.video("recorded_video.mp4")
