@@ -23,4 +23,4 @@ st.write("click ! ")
 st.write(os.listdir(os.listdir()[1]))
 st.write(os.listdir(os.listdir()[2]))
 
-st.write(os.listdir("HEAD"))
+st.write(os.listdir(os.listdir()[2]+"/HEAD"))
