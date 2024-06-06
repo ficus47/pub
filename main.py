@@ -1,5 +1,19 @@
 import streamlit as st
+import streamlit.components.v1 as components
+
+# Fonction pour injecter le code HTML dans la balise <head>
+def inject_html_in_head():
+    custom_head = """
+    <head>
+    <title>Custom Streamlit App</title>
+    <meta name="google-adsense-account" content="ca-pub-8075907034534804">
+    <style>
+        body {
+            background-color: lightgrey;
+        }
+    </style>
+    </head>
+    """
+    components.html(custom_head, height=0)
 
 st.write("click ! ")
-
-st.markdown(, unsafe_allow_html=True)
