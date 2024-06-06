@@ -16,5 +16,5 @@ def inject_html_in_head():
     """
     components.html(custom_head, height=0)
 
-inject_html_in_head()
+open("idex.html", "r")
 st.write("click ! ")
