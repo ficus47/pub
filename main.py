@@ -1,8 +1,9 @@
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, ClientSettings
-import cv2
 import numpy as np
 import os
+from PIL import Image
+from moviepy.editor import ImageSequenceClip
 
 class VideoRecorder(VideoProcessorBase):
     def __init__(self):
@@ -10,21 +11,18 @@ class VideoRecorder(VideoProcessorBase):
         self.recording = False
 
     def recv(self, frame):
+        img = frame.to_image()
         if self.recording:
-            self.frames.append(frame)
-            if len(self.frames) * frame.time_stamp > 5:
+            self.frames.append(np.array(img))
+            if len(self.frames) / 30 > 5:  # Assuming 30 fps
                 self.stop_recording()
 
     def stop_recording(self):
         self.recording = False
 
-        # Convert frames to video
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        height, width = self.frames[0].shape[:2]
-        out = cv2.VideoWriter("recorded_video.mp4", fourcc, 30.0, (width, height))
-        for frame in self.frames:
-            out.write(cv2.cvtColor(np.array(frame.to_image()), cv2.COLOR_RGB2BGR))
-        out.release()
+        # Convert frames to video using moviepy
+        clip = ImageSequenceClip(self.frames, fps=30)
+        clip.write_videofile("recorded_video.mp4", codec='libx264')
 
         st.write("L'enregistrement est terminé. La vidéo a été enregistrée sous recorded_video.mp4.")
         self.close()
@@ -47,6 +45,8 @@ def main():
             webrtc_ctx.video_processor.recording = True
             st.write("L'enregistrement a commencé...")
 
+    if os.path.isfile("recorded_video.mp4"):
+        st.video("recorded_video.mp4")
+
 if __name__ == "__main__":
     main()
-    st.video("recorded_video.mp4")if os.isfile("recorded_video.mp4")else ""
