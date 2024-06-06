@@ -1,54 +1,41 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, ClientSettings
-import numpy as np
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+import av
 import os
-from PIL import Image
+import time
 from moviepy.editor import ImageSequenceClip
 
-class VideoRecorder(VideoProcessorBase):
+# Dossier pour sauvegarder les images
+output_dir = "captured_frames"
+os.makedirs(output_dir, exist_ok=True)
+
+class VideoTransformer(VideoTransformerBase):
     def __init__(self):
         self.frames = []
-        self.recording = False
+        self.start_time = None
 
-    def recv(self, frame):
-        img = frame.to_image()
-        if self.recording:
-            self.frames.append(np.array(img))
-            if len(self.frames) / 30 > 5:  # Assuming 30 fps
-                self.stop_recording()
+    def transform(self, frame):
+        img = frame.to_ndarray(format="bgr24")
+        if self.start_time is None:
+            self.start_time = time.time()
 
-    def stop_recording(self):
-        self.recording = False
+        if time.time() - self.start_time < 5:
+            self.frames.append(img)
+        return av.VideoFrame.from_ndarray(img, format="bgr24")
 
-        # Convert frames to video using moviepy
-        clip = ImageSequenceClip(self.frames, fps=30)
-        clip.write_videofile("recorded_video.mp4", codec='libx264')
+# Configurer le streamer
+ctx = webrtc_streamer(key="example", video_transformer_factory=VideoTransformer)
 
-        st.write("L'enregistrement est terminé. La vidéo a été enregistrée sous recorded_video.mp4.")
-        self.close()
+if ctx.video_transformer:
+    # Sauvegarder les images après 5 secondes
+    if time.time() - ctx.video_transformer.start_time > 5 and ctx.video_transformer.frames:
+        for i, frame in enumerate(ctx.video_transformer.frames):
+            frame_path = os.path.join(output_dir, f"frame_{i:04d}.png")
+            Image.fromarray(frame).save(frame_path)
+        st.write("Images capturées et sauvegardées.")
 
-def main():
-    st.title("Enregistrement Vidéo de 5 Secondes")
-
-    st.write("Appuyez sur le bouton 'Enregistrer' pour démarrer l'enregistrement.")
-
-    webrtc_ctx = webrtc_streamer(
-        key="video-recorder",
-        video_processor_factory=VideoRecorder,
-        client_settings=ClientSettings(
-            media_stream_constraints={"video": True, "audio": False},
-        ),
-    )
-
-    if webrtc_ctx.video_processor:
-        if st.button("Enregistrer"):
-            webrtc_ctx.video_processor.recording = True
-            st.write("L'enregistrement a commencé...")
-
-    if os.path.isfile("recorded_video.mp4"):
-        st.video("recorded_video.mp4")
-
-if __name__ == "__main__":
-    main()
-    if os.path.isfile("recorded_video.mp4"):
-        st.video("recorded_video.mp4")
+        # Assembler les images en vidéo
+        clip = ImageSequenceClip(output_dir, fps=10)
+        clip.write_videofile("output_video.mp4")
+        st.write("Vidéo créée : output_video.mp4")
+        ctx.video_transformer.frames = []  # Réinitialiser les frames après la création de la vidéo
