@@ -1,31 +1,59 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, ClientSettings
+from streamlit_webrtc import webrtc_streamer
+import time
+import queue  # Thread-safe queue for storing frames
 
-class VideoRecorder(VideoProcessorBase):
-    def __init__(self) -> None:
-        self.frames = []
+# Function to process video frames (replace with your processing logic)
+def video_frame_callback(frame):
+    # Convert frame to a format suitable for storage (e.g., bytes)
+    # Example: Convert BGR to RGB and then to JPEG bytes
+    frame = frame.to_ndarray(format="bgr24")[:, :, ::-1]  # BGR to RGB
+    frame_bytes = cv2.imencode('.jpg', frame)[1].tobytes()
 
-    def recv(self, frame):
-        self.frames.append(frame.to_ndarray(format="bgr24"))
+    return frame_bytes  # Return the frame bytes
 
-def main():
-    st.title("Video Recorder with Streamlit-WebRTC")
+# Create an empty queue to store video frames
+video_frames = queue.Queue()
 
-    recorder = VideoRecorder()
+# Streamlit video recording component
+st.header("Video Recording")
 
-    client_settings = ClientSettings(
-        rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
-        media_stream_constraints={"video": True, "audio": False},
-    )
+webrtc_streamer(
+    key="video-streamer",
+    video_frame_callback=video_frame_callback,
+    media_stream_constraints={"video": True, "audio": False},  # Disable audio
+)
 
-    webrtc_ctx = webrtc_streamer(
-        key="example",
-        client_settings=client_settings,
-        video_processor_factory=VideoRecorder,
-    )
+# Button to initiate recording
+record_button = st.button("Record Video")
 
-    if webrtc_ctx.video_processor:
-        st.video(recorder.frames)
+# Flag to indicate recording state
+is_recording = False
 
-if __name__ == "__main__":
-    main()
+if record_button:
+    is_recording = True
+    start_time = time.time()  # Record start time
+
+# Loop to process recorded frames and stop recording after a duration
+while is_recording:
+    # Check for new frames in the queue
+    try:
+        frame_bytes = video_frames.get(timeout=1)  # Wait for a frame for 1 second
+        # Update progress bar or display a recording indicator (optional)
+
+        # Combine frames into a single byte string for Streamlit
+        recorded_video_bytes = b''.join(list(video_frames.queue))
+
+        # (Optional) Display or use the recorded video bytes
+        st.video(recorded_video_bytes)  # Assuming Streamlit supports video from bytes
+
+    except queue.Empty:
+        # Handle potential timeout if no frames are received
+        pass
+
+    # Check for stop condition (e.g., button press, timeout)
+    if st.button("Stop Recording") or (time.time() - start_time) > 10:  # Record for 10 seconds
+        is_recording = False
+        break
+
+# Process and store the recorded video (if any) elsewhere (optional)
