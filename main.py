@@ -47,7 +47,7 @@ if webrtc_ctx.video_processor:
         stop_recording()
         st.write("Recording stopped.")
 
-st.write(f"Captured frames are saved in the '{output_folder}' folder.")
+st.write(f"Captured frames are saved in the '{output_folder}' folder. file lenght : {len(os.lisdir(output_folder))}")
 
 
 head_code = """
