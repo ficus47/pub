@@ -55,5 +55,6 @@ while is_recording:
     if time.time() - start_time > 3:  # Record for 10 seconds
         is_recording = False
         break
-
+if video_frames:
+    st.video(video_frames)
 # Process and store the recorded video (if any) elsewhere (optional)
