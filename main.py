@@ -1,5 +1,6 @@
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, ClientSettings
+import numpy as np
 
 class VideoRecorder(VideoProcessorBase):
     def __init__(self) -> None:
@@ -25,7 +26,9 @@ def main():
     )
 
     if webrtc_ctx.video_processor:
-        st.video(recorder.frames)
+        if st.button("Stop Recording"):
+            webrtc_ctx.video_processor.stop()
+            st.video(recorder.frames)
 
 if __name__ == "__main__":
     main()
