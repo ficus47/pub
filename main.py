@@ -22,6 +22,7 @@ class VideoProcessor(VideoProcessorBase):
         self.lock = threading.Lock()
 
     def recv(self, frame):
+        print("1")
         img = frame.to_image()
         with self.lock:
             if is_recording:
