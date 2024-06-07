@@ -19,6 +19,7 @@ class VideoProcessor(VideoProcessorBase):
     def recv(self, frame):
         img = frame.to_image()
         if self.is_recording:
+            st.image(frame)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
             img.save(os.path.join(output_folder, f"frame_{timestamp}.png"))
         return av.VideoFrame.from_image(img)
