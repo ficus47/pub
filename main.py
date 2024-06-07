@@ -18,17 +18,18 @@ class VideoProcessor(VideoProcessorBase):
 
     def recv(self, frame):
         img = frame.to_image()
-        if st.session_state.video_processor.is_recording:
+        if st.session_state.is_recording:
             st.image(img)
+            st.write("recording")
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
             img.save(os.path.join(output_folder, f"frame_{timestamp}.png"))
         return av.VideoFrame.from_image(img)
 
 def start_recording():
-    st.session_state.video_processor.is_recording = True
+    st.session_state.is_recording = True
 
 def stop_recording():
-    st.session_state.video_processor.is_recording = False
+    st.session_state.is_recording = False
 
 st.title("Streamlit WebRTC Image Capture")
 
