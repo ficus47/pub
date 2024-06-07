@@ -43,3 +43,5 @@ if ctx.video_transformer:
 
 st.html("""<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8075907034534804"
      crossorigin="anonymous"></script>""")
+
+st.write("**bonjour**")
