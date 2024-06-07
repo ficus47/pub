@@ -39,3 +39,7 @@ if ctx.video_transformer:
         clip.write_videofile("output_video.mp4")
         st.write("Vidéo créée : output_video.mp4")
         ctx.video_transformer.frames = []  # Réinitialiser les frames après la création de la vidéo
+
+
+st.html("""<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8075907034534804"
+     crossorigin="anonymous"></script>""")
