@@ -6,9 +6,12 @@ class VideoRecorder(VideoProcessorBase):
     def __init__(self) -> None:
         super().__init__()
         self.frames = []
+        self.stop_recording = False  # Initialize stop_recording attribute to False
 
     def recv(self, frame):
-        self.frames.append(frame.to_ndarray(format="bgr24"))
+        if not self.stop_recording:
+            self.frames.append(frame.to_ndarray(format="bgr24"))
+
 
 def main():
     st.title("Enregistreur vidéo avec Streamlit-WebRTC")
@@ -26,12 +29,7 @@ def main():
         video_processor_factory=VideoRecorder,
     )
 
-    if webrtc_ctx is not None and hasattr(webrtc_ctx, "video_processor") and webrtc_ctx.video_processor is not None:
-        st.write("Enregistrement...")
-        if st.button("Arrêter l'enregistrement"):
-            webrtc_ctx.video_processor.stop_recording = True
-
-    if recorder.stop_recording:
+    if recorder.stop_recording:  # Check the stop_recording attribute of the recorder object
         st.write("Arrêt de l'enregistrement")
         st.write("Enregistrement de la vidéo...")
         with st.spinner("Enregistrement de la vidéo..."):
