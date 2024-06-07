@@ -51,24 +51,10 @@ while is_recording:
         is_recording = False
         break
 
-# Process and store the recorded video (if any)
-if is_recording:  # Recording was stopped before capturing any frames
-    st.error("Recording stopped unexpectedly.")
-else:
-    # Combine frames into a video using moviepy
-    video_clips = []  # List to store individual video clips
-    while not video_frames.empty():
-        frame_bytes = video_frames.get()
-        # Convert bytes to NumPy array and add clip to list
-        frame = np.frombuffer(frame_bytes, dtype=np.uint8).reshape((height, width, 3))
-        video_clips.append(mpe.ImageClip(frame))
+if not video_frames.empty():
+    # Convert bytes to NumPy array and create clips
+    video_clips = [mpe.ImageClip(np.frombuffer(frame_bytes, dtype=np.uint8).reshape((height, width, 3))) for frame_bytes in video_frames]
 
-    # Create and save the final video
-    final_clip = mpe.concatenate_clips(video_clips)
+    # Create and save the final video using concatenate_videoclips
+    final_clip = mpe.concatenate_videoclips(video_clips)
     final_clip.write_videofile("recorded_video.mp4", fps=30)
-
-    # Display or use the recorded video as needed
-    st.success("Video recording complete!")
-
-    # (Optional) Allow user to download or interact with the video
-    # ...
