@@ -44,3 +44,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+    try:
+        st.video("video.mp4")
+    except Exception as e:
+        st.write(e)
