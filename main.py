@@ -4,6 +4,8 @@ import av
 import os
 import time
 from moviepy.editor import ImageSequenceClip
+import streamlit.components.v1 as components
+
 
 # Dossier pour sauvegarder les images
 output_dir = "captured_frames"
@@ -41,7 +43,26 @@ if ctx.video_transformer:
         ctx.video_transformer.frames = []  # Réinitialiser les frames après la création de la vidéo
 
 
-st.html("""<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8075907034534804"
-     crossorigin="anonymous"></script>""", width=50, height=200)
+head_code = """
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8075907034534804"
+     crossorigin="anonymous"></script>
+"""
+
+# Utilisez la fonction components.html pour insérer le code dans la page
+components.html(
+    f"""
+    <html>
+    <head>
+        {head_code}
+    </head>
+    <body>
+        <!-- Le contenu principal de votre application Streamlit -->
+        <h1>Bienvenue sur mon site Streamlit</h1>
+        <p>Voici un exemple d'application Streamlit avec une publicité Google AdSense.</p>
+    </body>
+    </html>
+    """,
+    height=600,  # Ajustez la hauteur si nécessaire
+)
 
 st.write("**bonjour**")
