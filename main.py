@@ -5,13 +5,11 @@ import queue  # Thread-safe queue for storing frames
 
 # Function to process video frames (replace with your processing logic)
 def video_frame_callback(frame):
-    # Convert frame to a format suitable for storage (e.g., bytes)
-    # Example: Convert BGR to RGB and then to JPEG bytes
-    frame = frame.to_ndarray(format="bgr24")[:, :, ::-1]  # BGR to RGB
-    frame_bytes = cv2.imencode('.jpg', frame)[1].tobytes()
+    # Convert frame to a NumPy array (optional, based on storage strategy)
+    frame = frame.to_ndarray(format="bgr24")[:, :, ::-1]  # BGR to RGB (optional)
 
-    return frame_bytes  # Return the frame bytes
-
+    # Store frame (array or bytes) in the queue
+    video_frames.put(frame) 
 # Create an empty queue to store video frames
 video_frames = queue.Queue()
 
