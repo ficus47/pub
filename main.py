@@ -52,7 +52,7 @@ while is_recording:
         pass
 
     # Check for stop condition (e.g., button press, timeout)
-    if time.time() - start_time > 10:  # Record for 10 seconds
+    if time.time() - start_time > 3:  # Record for 10 seconds
         is_recording = False
         break
 
