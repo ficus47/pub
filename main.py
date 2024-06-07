@@ -26,6 +26,7 @@ class VideoProcessor(VideoProcessorBase):
         img = frame.to_image()
         with self.lock:
             if is_recording:
+                print("1")
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
                 img.save(os.path.join(output_folder, f"frame_{timestamp}.png"))
         return av.VideoFrame.from_image(img)
