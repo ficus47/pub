@@ -3,10 +3,10 @@ from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, VideoProcess
 import av
 import os
 import time
+from PIL import Image
+import datetime
 from moviepy.editor import ImageSequenceClip
 import streamlit.components.v1 as components
-
-# Créez un dossier pour stocker les images capturées
 output_folder = "captured_images"
 os.makedirs(output_folder, exist_ok=True)
 
@@ -46,6 +46,7 @@ if webrtc_ctx.video_processor:
     if st.button("Stop Recording"):
         stop_recording()
         st.write("Recording stopped.")
+
 
 st.write(f"Captured frames are saved in the '{output_folder}' folder. file lenght : {len(os.listdir(output_folder))}")
 
