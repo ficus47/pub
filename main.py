@@ -17,6 +17,7 @@ class VideoProcessor(VideoProcessorBase):
         self.frames = []
 
     def recv(self, frame):
+        st.write("1")
         img = frame.to_image()
         if st.session_state.is_recording:
             st.image(img)
