@@ -41,7 +41,7 @@ def main():
                 writer.append_data(frame)
             writer.close()
         st.success("Vidéo enregistrée avec succès!")
-        st.file_uploader("video.mp4")
+        st.download_button("video.mp4")
 
 if __name__ == "__main__":
     main()
