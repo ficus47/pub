@@ -30,7 +30,7 @@ def main():
         if st.button("Stop Recording"):
             webrtc_ctx.video_processor.stop_recording = True
 
-    if hasattr(webrtc_ctx, "video_processor") and webrtc_ctx.video_processor.stop_recording:
+    if hasattr(webrtc_ctx, "video_processor"):
         st.write("Stopped Recording")
         st.video(recorder.frames)
 
