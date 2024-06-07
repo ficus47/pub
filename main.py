@@ -31,7 +31,7 @@ def main():
         if st.button("Arrêter l'enregistrement"):
             webrtc_ctx.video_processor.stop_recording = True
 
-    if hasattr(webrtc_ctx, "video_processor") and webrtc_ctx.video_processor.stop_recording:
+    if hasattr(webrtc_ctx, "video_processor"):
         st.write("Arrêt de l'enregistrement")
         st.write("Enregistrement de la vidéo...")
         with st.spinner("Enregistrement de la vidéo..."):
