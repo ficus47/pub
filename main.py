@@ -37,7 +37,7 @@ video_transformer = VideoTransformer()
 
 # Streamlit UI
 st.title("WebRTC Image Capture")
-webrtc_ctx = webrtc_streamer(key="example", video_transformer_factory=VideoTransformer)
+webrtc_ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer)
 
 if webrtc_ctx.video_transformer:
     if st.button("Start Capture for 5 seconds"):
