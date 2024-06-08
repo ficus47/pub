@@ -22,6 +22,7 @@ class VideoTransformer(VideoTransformerBase):
 
     def transform(self, frame):
         img = frame.to_ndarray(format="bgr24")
+        st.image(img)
         with self.lock:
             if self.capturing:
                 self.frames.append(img)
