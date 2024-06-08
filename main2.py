@@ -11,6 +11,7 @@ import threading
 
 import streamlit as st
 import streamlit_webrtc as webctr
+import recorder
 
 st.title("Enregistreur de Vidéo")
 
