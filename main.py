@@ -6,6 +6,7 @@ import time
 from PIL import Image
 import numpy as np
 import os
+from datetime import datetime, timedelta
 
 # Define the directory to save images
 save_dir = "captured_images"
@@ -17,33 +18,35 @@ class VideoTransformer(VideoTransformerBase):
         self.frames = []
         self.lock = threading.Lock()
         self.capturing = False
+        self.capture_end_time = None
 
     def transform(self, frame):
         img = frame.to_ndarray(format="bgr24")
         with self.lock:
             if self.capturing:
                 self.frames.append(img)
+                if datetime.now() >= self.capture_end_time:
+                    self.capturing = False
         return frame
 
-    def start_capture(self):
+    def start_capture(self, duration):
         self.capturing = True
         self.frames = []
-
-    def stop_capture(self):
-        self.capturing = False
+        self.capture_end_time = datetime.now() + timedelta(seconds=duration)
 
 # Instantiate the video transformer
 video_transformer = VideoTransformer()
 
 # Streamlit UI
 st.title("WebRTC Image Capture")
-webrtc_ctx = webrtc_streamer(key="example", video_processor_factory=VideoTransformer)
+webrtc_ctx = webrtc_streamer(key="example", video_transformer_factory=VideoTransformer)
 
 if webrtc_ctx.video_transformer:
     if st.button("Start Capture for 5 seconds"):
-        video_transformer.start_capture()
-        time.sleep(5)  # Capture for 5 seconds
-        video_transformer.stop_capture()
+        video_transformer.start_capture(5)
+
+        while video_transformer.capturing:
+            time.sleep(0.1)  # Small sleep to avoid high CPU usage
 
         with video_transformer.lock:
             captured_frames = video_transformer.frames[:]
